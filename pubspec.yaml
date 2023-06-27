@@ -30,12 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   flutter_barcode_scanner: ^2.0.0
-  audioplayers: any
+  flutter_beep: ^1.0.0
+  assets_audio_player: ^3.0.3+3
   cupertino_icons: ^1.0.2
+
 assets:
-    - assets/audio/beep.mp3
+    - assets/
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -12,55 +12,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _scanBarcode = 'Unknown';
-
+  String _scanBarcode = 'Aguardando..';
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> startBarcodeScanStream() async {
-    FlutterBarcodeScanner.getBarcodeStreamReceiver(
-            '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
-        .listen((barcode) => print(barcode));
-  }
-
-  Future<void> scanQR() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+          '#ff6666', 'Cancelar', true, ScanMode.BARCODE);
       print(barcodeScanRes);
+      FlutterBeep.beep();
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
@@ -72,25 +39,36 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        color: Color.fromARGB(255, 230, 97, 8),
         home: Scaffold(
-            appBar: AppBar(title: const Text('Leitor de código de barras')),
+            appBar: AppBar(
+                title: const Text('Leitor de código de barras'),
+                backgroundColor: Colors.blueGrey),
             body: Builder(builder: (BuildContext context) {
               return Container(
-                  alignment: Alignment.center,
-                  child: Flex(
-                      direction: Axis.vertical,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ElevatedButton(
-                            onPressed: () => scanBarcodeNormal(),
-                            child: Text('Escanear código de barras')),
-                        ElevatedButton(
-                            onPressed: () => startBarcodeScanStream(),
-                            child: Text('Escanear código de barras em fila')),
-                        Text('Código escaneado: $_scanBarcode\n',
-                            style: TextStyle(fontSize: 20))
-                      ]));
+                alignment: Alignment.center,
+                child: Flex(
+                    direction: Axis.vertical,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        'Código escaneado:\n $_scanBarcode\n',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                      SizedBox(
+                        height: 140,
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            scanBarcodeNormal();
+                          },
+                          icon: const Icon(
+                            Icons.barcode_reader,
+                            color: Color.fromARGB(255, 1, 113, 204),
+                          ),
+                          iconSize: 100),
+                      SizedBox(height: 50)
+                    ]),
+              );
             })));
   }
 }
