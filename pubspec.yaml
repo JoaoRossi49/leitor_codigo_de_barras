@@ -34,6 +34,8 @@ dependencies:
   flutter_beep: ^1.0.0
   assets_audio_player: ^3.0.3+3
   cupertino_icons: ^1.0.2
+  sqflite: any
+  path_provider: any
 
 assets:
     - assets/
