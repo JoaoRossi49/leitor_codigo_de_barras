@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
   flutter_barcode_scanner: ^2.0.0
   flutter_beep: ^1.0.0
   assets_audio_player: ^3.0.3+3
@@ -37,8 +38,7 @@ dependencies:
   sqflite: any
   path_provider: any
 
-assets:
-    - assets/
+  
 
 dev_dependencies:
   flutter_test:
@@ -56,7 +56,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/images/logo.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

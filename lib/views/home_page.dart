@@ -42,42 +42,37 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-            appBar: AppBar(
-                title: const Text('Leitor de código de barras'),
-                backgroundColor: Colors.blueGrey),
-            body: Builder(builder: (BuildContext context) {
-              return Container(
-                alignment: Alignment.center,
-                child: Flex(
-                    direction: Axis.vertical,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flex(
-                        direction: Axis.horizontal,
-                        children: [Text('Código escaneado: $_scanBarcode')],
-                      ),
-                      Flex(direction: Axis.horizontal, children: [
-                        IconButton(
-                            onPressed: () async {
-                              await scanBarcodeNormal();
-                              Random random = Random();
-                              var id = Random().nextInt(999) +
-                                  DateTime.now().microsecond;
-                              Navigator.of(context).pushNamed('/item_form',
-                                  arguments:
-                                      Item(codigo: _scanBarcode, id: id));
-                            },
-                            icon: const Icon(
-                              Icons.barcode_reader,
-                              color: Color.fromARGB(255, 1, 113, 204),
-                            ),
-                            iconSize: 100)
-                      ])
-                    ]),
-              );
-            })),
+        home: Scaffold(body: Builder(builder: (BuildContext context) {
+          return Container(
+            alignment: Alignment.center,
+            child: Flex(
+                direction: Axis.vertical,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flex(
+                    direction: Axis.horizontal,
+                    children: [Text('Código escaneado: $_scanBarcode')],
+                  ),
+                  Flex(direction: Axis.horizontal, children: [
+                    IconButton(
+                        onPressed: () async {
+                          await scanBarcodeNormal();
+                          Random random = Random();
+                          var id = Random().nextInt(999) +
+                              DateTime.now().microsecond;
+                          Navigator.of(context).pushNamed('/item_form',
+                              arguments: Item(codigo: _scanBarcode, id: id));
+                        },
+                        icon: const Icon(
+                          Icons.barcode_reader,
+                          color: Color.fromARGB(255, 1, 113, 204),
+                        ),
+                        iconSize: 100)
+                  ])
+                ]),
+          );
+        })),
         routes: {
           '/item_form': (context) => const ItemForm(),
         });
