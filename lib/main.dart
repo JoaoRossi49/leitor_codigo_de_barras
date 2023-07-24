@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leitor_codigo_de_barras/views/login_page.dart';
+import 'package:leitor_codigo_de_barras/views/home_page.dart';
 
 Future<void> main() async {
   runApp(const App());
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const LoginPage(),
+      home: const HomePage(),
     );
   }
 }

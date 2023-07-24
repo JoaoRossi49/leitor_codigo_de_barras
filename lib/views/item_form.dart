@@ -14,6 +14,9 @@ class ItemForm extends StatelessWidget {
       if (item != null) {
         _formData['id'] = item.id.toString();
         _formData['codigo'] = item.codigo.toString();
+        _formData['nomeProduto'] = 'Teste';
+        _formData['quantidade'] = '1';
+        _formData['valorUnitario'] = '0';
       }
     }
 
@@ -22,22 +25,46 @@ class ItemForm extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cadastrar novo item"),
+        backgroundColor: Color.fromARGB(255, 1, 113, 204),
         actions: <Widget>[
           IconButton(onPressed: () {}, icon: const Icon(Icons.save))
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(15),
-        child: Form(
-          key: _form,
-          child: Column(children: <Widget>[
-            TextFormField(
-              initialValue: _formData['codigo'],
-              decoration: const InputDecoration(labelText: 'Código escaneado'),
-            )
-          ]),
-        ),
-      ),
+          padding: EdgeInsets.all(15),
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              SizedBox(height: 10),
+              Container(
+                child: Form(
+                  key: _form,
+                  child: Column(children: <Widget>[
+                    TextFormField(
+                      initialValue: _formData['codigo'],
+                      decoration:
+                          const InputDecoration(labelText: 'Código escaneado'),
+                    ),
+                    TextFormField(
+                      initialValue: _formData['nomeProduto'],
+                      decoration:
+                          const InputDecoration(labelText: 'Nome do produto'),
+                    ),
+                    TextFormField(
+                      initialValue: _formData['quantidade'],
+                      decoration: const InputDecoration(
+                          labelText: 'Quantidade em estoque'),
+                    ),
+                    TextFormField(
+                      initialValue: _formData['valorUnitario'],
+                      decoration:
+                          const InputDecoration(labelText: 'Valor unitário'),
+                    )
+                  ]),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }
