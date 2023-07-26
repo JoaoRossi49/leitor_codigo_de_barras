@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:leitor_codigo_de_barras/models/Item.dart';
-import 'dart:math';
 import 'package:leitor_codigo_de_barras/views/item_form.dart';
+import 'package:leitor_codigo_de_barras/views/item_list.dart';
+import 'package:leitor_codigo_de_barras/data/DatabaseHelper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,11 +20,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  int generateID() {
-    var id = Random().nextInt(999) + DateTime.now().microsecond;
-    return id;
   }
 
   Future<void> scanBarcodeNormal() async {
@@ -46,85 +42,122 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<List<Item>?>? conferir() async {
+    return await DatabaseHelper.getItem(_scanBarcode);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-            backgroundColor: Colors.grey[300],
-            body: Builder(builder: (BuildContext context) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      child: Image.asset('assets/images/barra_techLogo.png'),
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Flex(
-                          direction: Axis.vertical,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Flex(
-                                direction: Axis.horizontal,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flex(
-                                    direction: Axis.vertical,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pushNamed(
-                                              '/item_form',
-                                              arguments: Item(
+          backgroundColor: Colors.grey[300],
+          body: Builder(builder: (BuildContext context) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/barra_techLogo.png'),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Flex(
+                        direction: Axis.vertical,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flex(
+                              direction: Axis.horizontal,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flex(
+                                  direction: Axis.vertical,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () async {
+                                        Navigator.of(context)
+                                            .pushNamed('/item_form',
+                                                arguments: Item(
                                                   codigo: '',
-                                                  id: generateID()));
-                                        },
-                                        icon: const Icon(Icons.keyboard),
-                                        color: const Color.fromARGB(
-                                            255, 1, 113, 204),
-                                        iconSize: 100,
-                                      ),
-                                      const Text("Digitar código")
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 80,
-                                  ),
-                                  Flex(
-                                    direction: Axis.vertical,
-                                    children: [
-                                      IconButton(
-                                          onPressed: () async {
-                                            await scanBarcodeNormal();
+                                                  descicao: '',
+                                                  quantidade: '',
+                                                  valorUnitario: '',
+                                                ));
+                                      },
+                                      icon: const Icon(Icons.keyboard),
+                                      color: const Color.fromARGB(
+                                          255, 1, 113, 204),
+                                      iconSize: 100,
+                                    ),
+                                    const Text("Digitar código")
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Flex(
+                                  direction: Axis.vertical,
+                                  children: [
+                                    IconButton(
+                                        onPressed: () async {
+                                          await scanBarcodeNormal();
+                                          if (conferir() == null) {
+                                            Navigator.of(context)
+                                                .pushNamed('/item_form',
+                                                    arguments: Item(
+                                                      codigo: _scanBarcode,
+                                                      descicao: '',
+                                                      quantidade: '',
+                                                      valorUnitario: '',
+                                                    ));
+                                          } else {
+                                            List<Item> _conferencia =
+                                                conferir() as List<Item>;
                                             Navigator.of(context).pushNamed(
                                                 '/item_form',
-                                                arguments: Item(
-                                                    codigo: _scanBarcode,
-                                                    id: generateID()));
-                                          },
-                                          icon: const Icon(
-                                            Icons.barcode_reader,
-                                            color: Color.fromARGB(
-                                                255, 1, 113, 204),
-                                          ),
-                                          iconSize: 100),
-                                      const Text("Escanear código")
-                                    ],
-                                  )
-                                ]),
-                          ]),
-                    ),
-                  ],
-                ),
-              );
-            })),
+                                                arguments: _conferencia[0]);
+                                          }
+                                        },
+                                        icon: const Icon(
+                                          Icons.barcode_reader,
+                                          color:
+                                              Color.fromARGB(255, 1, 113, 204),
+                                        ),
+                                        iconSize: 100),
+                                    const Text("Escanear código")
+                                  ],
+                                ),
+                                Flex(
+                                  direction: Axis.vertical,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () async {
+                                        Navigator.of(context)
+                                            .pushNamed('/item_list');
+                                      },
+                                      icon: const Icon(Icons.list),
+                                      color: const Color.fromARGB(
+                                          255, 1, 113, 204),
+                                      iconSize: 100,
+                                    ),
+                                    const Text("Items cadastrados")
+                                  ],
+                                ),
+                              ]),
+                        ]),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
         routes: {
           '/item_form': (context) => const ItemForm(),
+          '/item_list': (context) => const ItemList()
         });
   }
 }

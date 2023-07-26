@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leitor_codigo_de_barras/models/Item.dart';
+import 'package:leitor_codigo_de_barras/data/DatabaseHelper.dart';
 
 class ItemForm extends StatelessWidget {
   const ItemForm({Key? key}) : super(key: key);
@@ -10,24 +11,54 @@ class ItemForm extends StatelessWidget {
     final Map<String, String> _formData = {};
     final Item item = ModalRoute.of(context)!.settings.arguments as Item;
 
+    Future<List<Item>?>? conferir() async {
+      return await DatabaseHelper.getItem(_formData['codigo']);
+    }
+
     void _loadFormData(Item item) {
-      if (item != null) {
-        _formData['id'] = item.id.toString();
-        _formData['codigo'] = item.codigo.toString();
-        _formData['nomeProduto'] = 'Teste';
-        _formData['quantidade'] = '1';
-        _formData['valorUnitario'] = '0';
-      }
+      Future<List<Item>?>? _conferencia = conferir();
+      print(_conferencia);
+      //if(_conferencia == null) {
+      _formData['codigo'] = item.codigo;
+      _formData['nomeProduto'] = item.descicao;
+      _formData['quantidade'] = item.quantidade;
+      _formData['valorUnitario'] = item.valorUnitario;
+      //}
     }
 
     _loadFormData(item);
 
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: const Text("Cadastrar novo item"),
         backgroundColor: Color.fromARGB(255, 1, 113, 204),
         actions: <Widget>[
-          IconButton(onPressed: () {}, icon: const Icon(Icons.save))
+          IconButton(
+              onPressed: () async {
+                _form.currentState?.save();
+
+                if (conferir() == null) {
+                  await DatabaseHelper.addItem(
+                    Item(
+                        codigo: _formData['codigo'].toString(),
+                        descicao: _formData['nomeProduto'].toString(),
+                        quantidade: _formData['quantidade'].toString(),
+                        valorUnitario: _formData['valorUnitario'].toString()),
+                  );
+                  Navigator.of(context).pop();
+                } else {
+                  await DatabaseHelper.updateItem(
+                    Item(
+                        codigo: _formData['codigo'].toString(),
+                        descicao: _formData['nomeProduto'].toString(),
+                        quantidade: _formData['quantidade'].toString(),
+                        valorUnitario: _formData['valorUnitario'].toString()),
+                  );
+                  Navigator.of(context).pop();
+                }
+              },
+              icon: const Icon(Icons.save))
         ],
       ),
       body: Padding(
@@ -41,25 +72,25 @@ class ItemForm extends StatelessWidget {
                   key: _form,
                   child: Column(children: <Widget>[
                     TextFormField(
-                      initialValue: _formData['codigo'],
-                      decoration:
-                          const InputDecoration(labelText: 'Código escaneado'),
-                    ),
+                        initialValue: _formData['codigo'],
+                        decoration: const InputDecoration(
+                            labelText: 'Código escaneado'),
+                        onSaved: (value) => _formData['codigo'] = value!),
                     TextFormField(
-                      initialValue: _formData['nomeProduto'],
-                      decoration:
-                          const InputDecoration(labelText: 'Nome do produto'),
-                    ),
+                        initialValue: _formData['nomeProduto'],
+                        decoration:
+                            const InputDecoration(labelText: 'Nome do produto'),
+                        onSaved: (value) => _formData['nomeProduto'] = value!),
                     TextFormField(
-                      initialValue: _formData['quantidade'],
-                      decoration: const InputDecoration(
-                          labelText: 'Quantidade em estoque'),
-                    ),
+                        initialValue: _formData['quantidade'],
+                        decoration: const InputDecoration(
+                            labelText: 'Quantidade em estoque'),
+                        onSaved: (value) => _formData['quantidade'] = value!),
                     TextFormField(
-                      initialValue: _formData['valorUnitario'],
-                      decoration:
-                          const InputDecoration(labelText: 'Valor unitário'),
-                    )
+                        initialValue: _formData['valorUnitario'],
+                        decoration:
+                            const InputDecoration(labelText: 'Valor unitário'),
+                        onSaved: (value) => _formData['valorUnitario'] = value!)
                   ]),
                 ),
               ),
